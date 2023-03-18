@@ -1,0 +1,64 @@
+﻿@model IEnumerable<DraggableApp.Models.Post>
+
+
+
+<style>
+	#sortable tr:hover{
+		background-color:#0094ff;
+	}
+</style>
+<div class="container">
+	<div col-md-6>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>Position</th>
+				</tr>
+			</thead>
+			<tbody id="sortable" style="cursor:pointer">
+				@foreach (var item in Model)
+				{
+					<tr>
+						<td>@item.Id</td>
+						<td class="taskSingleLine" id="task@(item.Id)" data-taskid="@(item.Id)">@item.Name</td>
+						<td>@item.RowNo</td>
+						
+
+					</tr>
+				}
+			</tbody>
+		</table>
+		<a class="btn btn-primary" href="@Url.Action("Index","Drag")">Update Position</a>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+<script>
+	$(document).ready(function () {
+		$("#sortable").sortable({
+			update: function (event, ui) {
+				var itemIds = "";
+				$("#sortable").find(".taskSingleLine").each(function () {
+					var itemId = $(this).attr("data-taskid");
+					itemIds = itemIds + itemId + ",";
+				});
+				$.ajax({
+					url: '@Url.Action("UpdateItem", "Drag")',
+					data: { itemIds: itemIds },
+					type: 'POST',
+					success: function (data) {
+
+					},
+					error: function (xhr, status, error) {
+
+					}
+				});
+
+			}
+		})
+
+	})
+</script>
